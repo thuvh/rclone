@@ -58,7 +58,7 @@ import (
 func init() {
 	fs.Register(&fs.RegInfo{
 		Name:        "s3",
-		Description: "Amazon S3 Compliant Storage Providers including AWS, Alibaba, Ceph, Digital Ocean, Dreamhost, IBM COS, Minio, SeaweedFS, and Tencent COS",
+		Description: "Amazon S3 Compliant Storage Providers including AWS, Alibaba, Ceph, Digital Ocean, Dreamhost, IBM COS, Minio, SeaweedFS, Tencent COS and FPT Smart Cloud",
 		NewFs:       NewFs,
 		CommandHelp: commandHelp,
 		Options: []fs.Option{{
@@ -105,6 +105,9 @@ func init() {
 			}, {
 				Value: "Wasabi",
 				Help:  "Wasabi Object Storage",
+			}, {
+				Value: "FPTSmartCloud",
+				Help: "FPT Object Storage",
 			}, {
 				Value: "Other",
 				Help:  "Any other S3 compatible provider",
@@ -222,8 +225,16 @@ func init() {
 			}},
 		}, {
 			Name:     "region",
+			Help:     "Region to connect to.",
+			Provider: "FPTSmartCloud",
+			Examples: []fs.OptionExample{{
+				Value: "sgn09",
+				Help:  "Ho Chi Minh, Vietnam",
+			}},
+		}, {
+			Name:     "region",
 			Help:     "Region to connect to.\n\nLeave blank if you are using an S3 clone and you don't have a region.",
-			Provider: "!AWS,Alibaba,Scaleway,TencentCOS",
+			Provider: "!AWS,Alibaba,Scaleway,TencentCOS,FPTSmartCloud",
 			Examples: []fs.OptionExample{{
 				Value: "",
 				Help:  "Use this if unsure.\nWill use v4 signatures and an empty region.",
@@ -595,10 +606,19 @@ func init() {
 				Value: "cos.accelerate.myqcloud.com",
 				Help:  "Use Tencent COS Accelerate Endpoint",
 			}},
+		},{
+			// fprt smart cloud endpoint
+			Name:     "endpoint",
+			Help:     "Endpoint for S3 API.",
+			Provider: "FPTSmartCloud",
+			Examples: []fs.OptionExample{{
+				Value: "s3-sgn09.fptcloud.com",
+				Help: "Ho Chi Minh, Vietnam",
+			}},
 		}, {
 			Name:     "endpoint",
 			Help:     "Endpoint for S3 API.\n\nRequired when using an S3 clone.",
-			Provider: "!AWS,IBMCOS,TencentCOS,Alibaba,Scaleway,StackPath",
+			Provider: "!AWS,IBMCOS,TencentCOS,Alibaba,Scaleway,StackPath,FPTSmartCloud",
 			Examples: []fs.OptionExample{{
 				Value:    "objects-us-east-1.dream.io",
 				Help:     "Dream Objects endpoint",
@@ -1740,6 +1760,8 @@ func setQuirks(opt *Options) {
 	case "TencentCOS":
 		listObjectsV2 = false // untested
 	case "Wasabi":
+		// No quirks
+	case "FPTSmartCloud":
 		// No quirks
 	case "Other":
 		listObjectsV2 = false
